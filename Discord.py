@@ -14,22 +14,25 @@ def check_username(username, password):
     
     return response.json()
 
-def process_usernames(file_path, delay=60/24): # 24 requests per minute so avoid rate limit
-    with open(file_path, 'r') as file:
+def process_usernames(input_file_path, output_file_path, delay=60/24): # 24 requests per minute to avoid rate limit
+    with open(input_file_path, 'r') as file:
         usernames = file.read().splitlines()
 
-    for username in usernames:
-        password = "" # Just empty so it doesnt change your name
-        response = check_username(username, password)
-        
-        if 'errors' in response:
-            if 'username' in response['errors']:
-                print(f"Username {username} is unavailable.")
-            else:
-                print(f"Username {username} is free.")
-        
-        time.sleep(delay)
+    with open(output_file_path, 'w') as outfile:
+        for username in usernames:
+            password = "" # Just empty so it doesn't change your name
+            response = check_username(username, password)
+            
+            if 'errors' in response:
+                if 'username' in response['errors']:
+                    print(f"Username {username} is unavailable.")
+                else:
+                    print(f"Username {username} is free.")
+                    outfile.write(username + "\n")
+            
+            time.sleep(delay)
 
-# Specify your file path here
-file_path = 'names.txt'
-process_usernames(file_path)
+# Specify your file paths here
+input_file_path = 'names.txt'
+output_file_path = 'available.txt'
+process_usernames(input_file_path, output_file_path)
