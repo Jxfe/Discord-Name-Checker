@@ -1,6 +1,7 @@
 import requests
 import json
 import time
+import os
 
 def check_username(username, password):
     url = "https://discord.com/api/v9/users/@me"
@@ -29,6 +30,8 @@ def process_usernames(input_file_path, output_file_path, delay=60/24): # 24 requ
                 else:
                     print(f"Username {username} is free.")
                     outfile.write(username + "\n")
+                    outfile.flush()
+                    os.fsync(outfile.fileno())
             
             time.sleep(delay)
 
